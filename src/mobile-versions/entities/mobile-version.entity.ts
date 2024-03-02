@@ -6,10 +6,6 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  Index,
-  OneToOne,
-  JoinColumn,
-  AfterLoad,
 } from 'typeorm';
 import { MobileOsType } from './mobile-os-type.entity';
 
