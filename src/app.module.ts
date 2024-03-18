@@ -7,6 +7,10 @@ import { ConfigurationModule } from './configuration/configuration.module';
 import { MobileVersionsModule } from './mobile-versions/mobile-versions.module';
 import { UserModule } from './user/user.module';
 import { ReportedPersonModule } from './reported-person/reported-person.module';
+import { AuthModule } from './auth/auth.module';
+import { EventModule } from './event/event.module';
+import { EmailModule } from './email/email.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -14,7 +18,11 @@ import { ReportedPersonModule } from './reported-person/reported-person.module';
     ConfigurationModule,
     MobileVersionsModule,
     UserModule,
-    ReportedPersonModule
+    ReportedPersonModule,
+    AuthModule,
+    EventModule,
+    EventEmitterModule.forRoot(),
+    EmailModule
   ],
   controllers: [AppController],
   providers: [AppService],

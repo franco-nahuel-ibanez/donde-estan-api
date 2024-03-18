@@ -3,6 +3,16 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
-  }
+    "deleteOutDir": true,
+    "assets": [
+      "email/templates/**",
+      {
+        "include": "../assets",
+        "outDir": "dist/assets",
+        "watchAssets": true
+      }
+    ],
+    "watchAssets": true
+  },
+  "exclude": ["node_modules", "tests", "src/migrations/**"]
 }

@@ -11,6 +11,7 @@ import {
 import { UserType } from './user-type.entity';
 import { ReportedPerson } from '../../reported-person/entities/reported-person.entity';
 import { UserStatus } from './user-status.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -35,11 +36,11 @@ export class User {
     type: 'varchar',
     length: 150,
     nullable: false,
+    unique: true,
   })
   email: string;
 
   @Column({
-    type: 'varchar',
     length: 150,
     nullable: false,
   })
@@ -50,16 +51,23 @@ export class User {
     length: 150,
     nullable: false,
   })
+  // @Exclude({ toPlainOnly: true })
   password: string;
 
   @ManyToOne(() => UserType, userType => userType.users)
   userType: UserType;
 
+  @Column()
+  userTypeId: number;
+
   @OneToMany(() => ReportedPerson, reportedPerson => reportedPerson.reportedBy)
   reportedPersons: ReportedPerson[];
 
-  @OneToMany(() => UserStatus, userStatus => userStatus.users)
+  @ManyToOne(() => UserStatus, userStatus => userStatus.users)
   userStatus: UserStatus;
+
+  @Column()
+  userStatusId: number;
 
   @Column({
     type: 'varchar',
@@ -85,7 +93,6 @@ export class User {
   @Column({
     type: 'varchar',
     length: 150,
-    nullable: false,
     default: false,
   })
   termsAndConditions: boolean;
