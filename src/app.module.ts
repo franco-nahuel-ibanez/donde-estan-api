@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { EventModule } from './event/event.module';
 import { EmailModule } from './email/email.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -22,7 +23,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AuthModule,
     EventModule,
     EventEmitterModule.forRoot(),
-    EmailModule
+    EmailModule,
+    MulterModule.register({
+      dest: './files',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

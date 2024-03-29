@@ -6,13 +6,23 @@ import { ReportedPerson } from './entities/reported-person.entity';
 import { personStatus } from './entities/person-status.entity';
 import { ReportingStatus } from './entities/reporting-status.entity';
 import { User } from '../user/entities/user.entity';
+import { AuthModule } from 'src/auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   controllers: [ReportedPersonController],
   providers: [ReportedPersonService],
   imports: [
     TypeOrmModule.forFeature([ReportedPerson, personStatus, ReportingStatus, User]),
+    AuthModule,
+    MulterModule.register({
+      dest: './files',
+    }),
   ],
-  exports: [ReportedPersonService],
+  exports: [
+    ReportedPersonService,
+    TypeOrmModule.forFeature([ReportedPerson, personStatus, ReportingStatus, User]),
+    ReportedPersonModule
+  ],
 })
 export class ReportedPersonModule {}

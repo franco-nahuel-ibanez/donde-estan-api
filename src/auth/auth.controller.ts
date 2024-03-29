@@ -2,7 +2,6 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 
-
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}  
@@ -41,20 +40,18 @@ export class AuthController {
     return this.authService.resetPassword(email, password, code);
   }
 
-  @Get('profile')
+  @Get('test')
   async profile() {
-    const res = await fetch('https://sisfet-blockchain.educacion.gob.ar/SelladorFederalTitulos.sol')
-      console.log(res)
-      
+    // url: http://api.dev.rext.la/contract/validate?contractPublicId=contract_id_7
+    // urlTest: https://jsonplaceholder.typicode.com/todos/1
+    
+    const res = await fetch('https://static.rext.la/test/contracts/Ownable.sol')      
       if (!res.ok) {
         throw new Error('No se pudo obtener el archivo');
       }
       
-      const file = await res.text();
+      const file = await res.text()
       console.log(file);
-
-
-    // console.log(image)
 
     return file
   }

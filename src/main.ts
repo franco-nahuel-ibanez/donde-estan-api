@@ -13,11 +13,12 @@ const configService = new ConfigService();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{
     logger: new FileLogger('NestApplication'),
-
+    
   });
   const port = configService.get('PORT');
-
+  
   app.enableCors({
+    origin: '*',
     allowedHeaders: 'Content-Type, Authorization',
   });
 

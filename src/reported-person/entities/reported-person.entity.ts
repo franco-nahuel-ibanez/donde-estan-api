@@ -22,9 +22,17 @@ export class ReportedPerson {
   @ManyToOne(() => ReportingStatus, reportingStatus => reportingStatus.reportedPersons)
   status: ReportingStatus;
 
+  @Column()
+  statusId: number;
+
+  @Column()
+  reportedById: number;
 
   @ManyToOne(() => personStatus, personStatus => personStatus.reportedPersons)
   personStatus: personStatus;
+
+  @Column()
+  personStatusId: number;
 
   @Column({
     type: 'varchar',

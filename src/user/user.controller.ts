@@ -18,13 +18,17 @@ export class UserController {
     return this.userService.getUser(user)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch()
+  update(
+    @GetUser() user: User,    
+    @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(user, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Delete()
+  remove(
+    @GetUser() user: User, 
+  ) {
+    return this.userService.deleteAccount(user);
   }
 }
