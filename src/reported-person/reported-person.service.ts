@@ -58,6 +58,7 @@ export class ReportedPersonService {
     try {
       const {
         search,
+        statusId,
         searchFields,
         orderByDate,
         page,
@@ -69,8 +70,8 @@ export class ReportedPersonService {
 
       const query = this.reportedPersonRepository.createQueryBuilder('reportedPerson')
         .leftJoinAndSelect('reportedPerson.reportedBy', 'reportedBy')
-        .where('reportedPerson.statusId = :statusId', { statusId: ReportingStatusEnum.APPROVED })
-
+        .where('reportedPerson.statusId = :statusId', { statusId: statusId || ReportingStatusEnum.APPROVED })
+        
       if (search && searchFields) {
         let fields = ['name', 'lastName']
 
@@ -163,19 +164,29 @@ export class ReportedPersonService {
   }
 
 
-  findAll() {
-    return `This action returns all reportedPerson`;
-  }
+  async updateStatus(id: number, statusId: number) {
+    this.logger.log(`Usuario ${id} actualizado a estado ${statusId}`);
+    try {
+      const reportedPerson = await this.reportedPersonRepository.findOne({
+        where: { id }
+      })
+      if (!reportedPerson) {
+        throw new BadRequestException({
+          title: 'Persona no encontrada',
+          message: 'Persona no encontrada',
+        });
+      }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reportedPerson`;
-  }
-
-  update(id: number, updateReportedPersonDto: UpdateReportedPersonDto) {
-    return `This action updates a #${id} reportedPerson`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} reportedPerson`;
+      reportedPerson.statusId = statusId;
+      await this.reportedPersonRepository.save(reportedPerson);
+      this.logger.log(`Estado de la persona ${id} actualizado a ${statusId}`);
+      return {
+        title: 'Estado actualizado',
+        message: `Estado de la persona actualizado a ${statusId}`,
+        data: reportedPerson,
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

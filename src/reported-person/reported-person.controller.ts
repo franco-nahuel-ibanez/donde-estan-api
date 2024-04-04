@@ -70,20 +70,12 @@ export class ReportedPersonController {
     res.sendFile(pathImage);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reportedPersonService.findOne(+id);
-  }
-
-  @Patch(':id')
+  @Post('update-status/:id')
   @UseGuards(AuthGuard())
-  update(@Param('id') id: string, @Body() updateReportedPersonDto: UpdateReportedPersonDto) {
-    return this.reportedPersonService.update(+id, updateReportedPersonDto);
-  }
-
-  @Delete(':id')
-  @UseGuards(AuthGuard())
-  remove(@Param('id') id: string) {
-    return this.reportedPersonService.remove(+id);
+  updateStatus(
+    @Param('id') id: string,
+    @Body('statusId') statusId: number, 
+  ) {
+    return this.reportedPersonService.updateStatus(+id, statusId);
   }
 }

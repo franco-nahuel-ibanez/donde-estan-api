@@ -31,4 +31,13 @@ export class UserController {
   ) {
     return this.userService.deleteAccount(user);
   }
+
+  @Post('block')
+  bloqued(
+    @GetUser() user: User,
+    @Body('userId') userId: number, 
+  ) {
+    return this.userService.block(user, userId);
+  }
+
 }

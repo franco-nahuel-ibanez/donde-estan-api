@@ -93,11 +93,12 @@ export class AuthService {
         },
       }
     } catch (error) {
-      this.logger.error(error);
-      throw new BadRequestException({
-        title: 'Error al registrar usuario',
-        message: 'Ocurrió un error al registrar el usuario, por favor intente nuevamente',
-      });
+      console.log(error)
+      // this.logger.error(error);
+      // throw new BadRequestException({
+      //   title: error.response.title || 'Error al registrar usuario',
+      //   message: 'Ocurrió un error al registrar el usuario, por favor intente nuevamente',
+      // });
     }
   }
 
@@ -260,8 +261,8 @@ export class AuthService {
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException({
-        title: 'Error al autenticar usuario',
-        message: 'Ocurrió un error al autenticar el usuario, por favor intente nuevamente',
+        title: error.response.title || 'Error al autenticar usuario',
+        message: error.response.message || 'Ocurrió un error al autenticar el usuario, por favor intente nuevamente',
       });
     }
   }
@@ -366,6 +367,98 @@ export class AuthService {
       throw new BadRequestException({
         title: 'Error al actualizar contraseña',
         message: 'Ocurrió un error al actualizar la contraseña, por favor intente nuevamente',
+      });
+    }
+  }
+
+  async resendPasswordCode(email: string) {
+    try {
+      const user = await this.userRepository.findOneBy({ email });
+
+      if (!user) {
+        throw new BadRequestException({
+          title: 'Usuario no encontrado',
+          message: 'El usuario no se encuentra registrado, por favor verifique el correo electrónico',
+        });
+      }
+
+      if (user.userStatusId === 4) {
+        throw new BadRequestException({
+          title: 'Usuario Bloqueado',
+          message: 'El usuario ya se encuentra registrado, pero se encuentra bloqueado, por favor comuníquese con el administrador.',
+        });
+      }
+
+      user.resetPasswordCode = this.uuid.randomUUID();
+      await this.userRepository.save(user);
+
+      const event = this.eventEmitter.emit(EventEnum.SEND_RESET_PASSWORD_CODE, {
+        email: user.email,
+        code: user.resetPasswordCode,
+      });
+
+      if (!event) {
+        throw new BadRequestException({
+          title: 'Error al enviar código de recuperación',
+          message: 'Ocurrió un error al enviar el código de recuperación, por favor intente nuevamente',
+        });
+      }
+
+      return {
+        title: 'Código de recuperación enviado',
+        message: 'Se ha enviado un código de recuperación a su correo electrónico',
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException({
+        title: 'Error al enviar código de recuperación',
+        message: 'Ocurrió un error al enviar el código de recuperación, por favor intente nuevamente',
+      });
+    }
+  }
+
+  async resendVerificationCode(email: string) {
+    try {
+      const user = await this.userRepository.findOneBy({ email });
+
+      if (!user) {
+        throw new BadRequestException({
+          title: 'Usuario no encontrado',
+          message: 'El usuario no se encuentra registrado, por favor verifique el correo electrónico',
+        });
+      }
+
+      if (user.userStatusId === 4) {
+        throw new BadRequestException({
+          title: 'Usuario Bloqueado',
+          message: 'El usuario ya se encuentra registrado, pero se encuentra bloqueado, por favor comuníquese con el administrador.',
+        });
+      }
+
+      user.accountEnableCode = this.uuid.randomUUID();
+      await this.userRepository.save(user);
+
+      const event = this.eventEmitter.emit(EventEnum.SEND_CODE_CONFIRMATION, {
+        email: user.email,
+        code: user.accountEnableCode,
+      });
+
+      if (!event) {
+        throw new BadRequestException({
+          title: 'Error al enviar código de verificación',
+          message: 'Ocurrió un error al enviar el código de verificación, por favor intente nuevamente',
+        });
+      }
+
+      return {
+        title: 'Código de verificación enviado',
+        message: 'Se ha enviado un código de verificación a su correo electrónico',
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException({
+        title: 'Error al enviar código de verificación',
+        message: 'Ocurrió un error al enviar el código de verificación, por favor intente nuevamente',
       });
     }
   }

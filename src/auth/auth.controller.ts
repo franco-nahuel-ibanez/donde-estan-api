@@ -40,20 +40,16 @@ export class AuthController {
     return this.authService.resetPassword(email, password, code);
   }
 
-  @Get('test')
-  async profile() {
-    // url: http://api.dev.rext.la/contract/validate?contractPublicId=contract_id_7
-    // urlTest: https://jsonplaceholder.typicode.com/todos/1
-    
-    const res = await fetch('https://static.rext.la/test/contracts/Ownable.sol')      
-      if (!res.ok) {
-        throw new Error('No se pudo obtener el archivo');
-      }
-      
-      const file = await res.text()
-      console.log(file);
+  @Post('resend-password-code')
+  resendPasswordCode(@Body() { email }: { email: string }) {
+    console.log("LLegue al controlador resend-password-code")
+    return this.authService.resendPasswordCode(email);
+  }
 
-    return file
+  @Post('resend-verification-code')
+  resendVerificationCode(@Body() { email }: { email: string }) {
+    console.log("LLegue al controlador resend-verification-code")
+    return this.authService.resendVerificationCode(email);
   }
 
 }

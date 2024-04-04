@@ -79,4 +79,41 @@ export class UserService {
       })
     }
   }
+
+  async block(user: User, userId: number) {
+    try {
+      if (user.userTypeId !== 1) {
+        throw new BadRequestException({
+          title: 'Error',
+          message: 'No tienes permisos para bloquear usuarios',
+        })
+      }
+
+      const userToBlock = await this.userRepository.findOne({
+        where: { id: userId }
+      });
+
+      if (!userToBlock) {
+        throw new BadRequestException({
+          title: 'Error',
+          message: 'Usuario no encontrado',
+        })
+      }
+
+      userToBlock.userStatusId = 4;
+      await this.userRepository.save(userToBlock);
+      return {
+        title: 'Usuario bloqueado',
+        message: 'Usuario bloqueado correctamente'
+      }
+    } catch (error) {
+      throw new BadRequestException({
+        title: 'Error',
+        message: 'Error al bloquear el usuario',
+      })
+    }
+  }
+
+
+
 }

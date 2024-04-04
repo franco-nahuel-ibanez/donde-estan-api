@@ -8,6 +8,10 @@ export class ReportFilterDto extends OrderedPaginatedQueryDto<ReportedPerson> {
   search?: string;
 
   @IsOptional()
+  @IsString()
+  statusId?: string;
+
+  @IsOptional()
   // @IsArray()
   searchFields?: string[];
 
