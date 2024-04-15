@@ -4,6 +4,8 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReportedPerson } from '../reported-person/entities/reported-person.entity'
+import { DeleteUserDto } from './dto/delete-user.dto';
+import { hash, compare, genSalt } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -110,6 +112,51 @@ export class UserService {
       throw new BadRequestException({
         title: 'Error',
         message: 'Error al bloquear el usuario',
+      })
+    }
+  }
+
+  async deleteAccountFromWeb(deleteUserDto: DeleteUserDto) {
+    try {
+      const { email, password } = deleteUserDto;
+      const user = await this.userRepository.findOne({
+        where: { email }
+      });
+
+      console.log("user", user)
+
+      if (!user) {
+        throw new BadRequestException({
+          title: 'Error',
+          message: 'Usuario no encontrado',
+        })
+      }
+
+      // compare password
+      const isPasswordValid = await compare(password, user.password);
+      if (!isPasswordValid) {
+        throw new BadRequestException({
+          title: 'Error',
+          message: 'Contraseña incorrecta',
+        })
+      }
+
+      console.log("llego aca")
+
+      await this.reportedPersonRepository.createQueryBuilder()
+        .delete()
+        .from(ReportedPerson)
+        .where('reportedById = :id', { id: user.id })
+        .execute();
+
+      await this.userRepository.delete(user.id);
+      return {
+        message: 'User deleted successfully'
+      }
+    } catch (error) {
+      throw new BadRequestException({
+        title: 'Error',
+        message: 'Error al eliminar la cuenta',
       })
     }
   }
