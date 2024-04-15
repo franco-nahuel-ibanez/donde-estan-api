@@ -5,13 +5,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/decorators/get-user.decorators';
 import { User } from './entities/user.entity';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Controller('user')
-@UseGuards(AuthGuard())
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @UseGuards(AuthGuard())
   getUser(
     @GetUser() user: User
   ) {
@@ -19,6 +20,7 @@ export class UserController {
   }
 
   @Patch()
+  @UseGuards(AuthGuard())
   update(
     @GetUser() user: User,    
     @Body() updateUserDto: UpdateUserDto) {
@@ -26,6 +28,7 @@ export class UserController {
   }
 
   @Delete()
+  @UseGuards(AuthGuard())
   remove(
     @GetUser() user: User, 
   ) {
@@ -33,11 +36,20 @@ export class UserController {
   }
 
   @Post('block')
+  @UseGuards(AuthGuard())
   bloqued(
     @GetUser() user: User,
     @Body('userId') userId: number, 
   ) {
     return this.userService.block(user, userId);
+  }
+
+  @Delete('/delete-web')
+  removeWeb(
+    @Body() deleteUserDto: DeleteUserDto
+  ) {
+    console.log("deleteUserDto", deleteUserDto)
+    return this.userService.deleteAccountFromWeb(deleteUserDto);
   }
 
 }
