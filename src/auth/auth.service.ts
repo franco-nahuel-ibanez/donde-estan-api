@@ -315,10 +315,7 @@ export class AuthService {
   async resetPassword(email: string, password: string, code: string) {
     this.logger.verbose(`resetPassword: ${email} ${password} ${code}`);
     try {
-      const user = await this.userRepository.findOneBy({ email });
-      console.log('email', email)
-      console.log('user', user)
-
+      const user = await this.userRepository.findOneBy({ resetPasswordCode: code });
 
       if (!user) {
         throw new BadRequestException({
@@ -334,14 +331,14 @@ export class AuthService {
         });
       }
 
-      if (user.resetPasswordCode != code) {
-        console.log('user.resetPasswordCode', user.resetPasswordCode)
-        console.log('code', code)
-        throw new BadRequestException({
-          title: 'Código de recuperación inválido',
-          message: 'El código de recuperación es inválido, por favor verifique el correo electrónico y el código',
-        });
-      }
+      // if (user.resetPasswordCode != code) {
+      //   console.log('user.resetPasswordCode', user.resetPasswordCode)
+      //   console.log('code', code)
+      //   throw new BadRequestException({
+      //     title: 'Código de recuperación inválido',
+      //     message: 'El código de recuperación es inválido, por favor verifique el correo electrónico y el código',
+      //   });
+      // }
 
       const salt = await genSalt(10);
       const hashedPassword = await hash(password, salt);
