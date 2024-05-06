@@ -93,12 +93,11 @@ export class AuthService {
         },
       }
     } catch (error) {
-      console.log(error)
-      // this.logger.error(error);
-      // throw new BadRequestException({
-      //   title: error.response.title || 'Error al registrar usuario',
-      //   message: 'Ocurrió un error al registrar el usuario, por favor intente nuevamente',
-      // });
+      this.logger.error(error);
+      throw new BadRequestException({
+        title: error.response.title || 'Error al registrar usuario',
+        message: 'Ocurrió un error al registrar el usuario, por favor intente nuevamente',
+      });
     }
   }
 
@@ -313,9 +312,8 @@ export class AuthService {
     }
   }
 
-
-
   async resetPassword(email: string, password: string, code: string) {
+    this.logger.verbose(`resetPassword: ${email} ${password} ${code}`);
     try {
       const user = await this.userRepository.findOneBy({ email });
 
@@ -333,7 +331,9 @@ export class AuthService {
         });
       }
 
-      if (user.resetPasswordCode !== code) {
+      if (user.resetPasswordCode != code) {
+        console.log('user.resetPasswordCode', user.resetPasswordCode)
+        console.log('code', code)
         throw new BadRequestException({
           title: 'Código de recuperación inválido',
           message: 'El código de recuperación es inválido, por favor verifique el correo electrónico y el código',
