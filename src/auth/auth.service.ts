@@ -316,6 +316,9 @@ export class AuthService {
     this.logger.verbose(`resetPassword: ${email} ${password} ${code}`);
     try {
       const user = await this.userRepository.findOneBy({ email });
+      console.log('email', email)
+      console.log('user', user)
+
 
       if (!user) {
         throw new BadRequestException({
