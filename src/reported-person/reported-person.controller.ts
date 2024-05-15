@@ -5,7 +5,6 @@ import { UpdateReportedPersonDto } from './dto/update-reported-person.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from '../helpers/filerFilter';
 import { fileNamer } from '../helpers/fileNamer';
-import { CompressedDiskStorageEngine } from 'src/helpers/compress-disk-storage';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/decorators/get-user.decorators';
 import { User } from '../user/entities/user.entity';
@@ -21,10 +20,6 @@ export class ReportedPersonController {
   @UseGuards(AuthGuard())
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: CompressedDiskStorageEngine({
-        destination: './files',
-        filename: fileNamer,
-      }),
       fileFilter: fileFilter,
     })
   )
@@ -33,7 +28,8 @@ export class ReportedPersonController {
     @UploadedFile() image : Express.Multer.File,
     @GetUser() user: User
   ) {
-    return this.reportedPersonService.create(createReportedPersonDto, user, image.filename);
+
+    return this.reportedPersonService.create(createReportedPersonDto, user, image);
   }
 
   @Get()

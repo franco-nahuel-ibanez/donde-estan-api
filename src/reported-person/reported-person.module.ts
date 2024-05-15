@@ -8,16 +8,17 @@ import { ReportingStatus } from './entities/reporting-status.entity';
 import { User } from '../user/entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Module({
   controllers: [ReportedPersonController],
-  providers: [ReportedPersonService],
+  providers: [ReportedPersonService, CloudinaryService],
   imports: [
     TypeOrmModule.forFeature([ReportedPerson, personStatus, ReportingStatus, User]),
     AuthModule,
-    MulterModule.register({
-      dest: './files',
-    }),
+    MulterModule.register(),
+    CloudinaryModule
   ],
   exports: [
     ReportedPersonService,

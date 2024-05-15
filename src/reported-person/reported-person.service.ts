@@ -11,6 +11,7 @@ import { ReportFilterDto } from './dto/repot-filter.dto';
 import { Pagination } from 'src/pagination/pagination.class';
 import * as fs from 'fs';
 import * as path from 'path';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ReportedPersonService {
@@ -22,10 +23,12 @@ export class ReportedPersonService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   
-  async create(createReportedPersonDto: CreateReportedPersonDto, user: User, image: string) {
+  async create(createReportedPersonDto: CreateReportedPersonDto, user: User, image: Express.Multer.File) {
     try {
       this.logger.log('Creating a new reported person');
       if (user.userStatusId !== 1 || user.deletedAt !== null) {
@@ -34,10 +37,12 @@ export class ReportedPersonService {
           message: 'El usuario no tiene permisos para realizar esta acción',
         });
       }
-    
+
+      const cloudinaryResponse = await this.cloudinaryService.uploadImage(image);
+
       const reportedPerson = this.reportedPersonRepository.create({
         ...createReportedPersonDto,
-        image,
+        image: cloudinaryResponse.secure_url,
         reportedBy: user,
         personStatusId: PersonStatus.SOUGHT,
         statusId: ReportingStatusEnum.PENDING,
