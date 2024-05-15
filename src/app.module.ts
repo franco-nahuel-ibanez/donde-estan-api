@@ -12,6 +12,7 @@ import { EventModule } from './event/event.module';
 import { EmailModule } from './email/email.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MulterModule } from '@nestjs/platform-express';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -24,9 +25,8 @@ import { MulterModule } from '@nestjs/platform-express';
     EventModule,
     EventEmitterModule.forRoot(),
     EmailModule,
-    MulterModule.register({
-      dest: './files',
-    }),
+    MulterModule.register(),
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
